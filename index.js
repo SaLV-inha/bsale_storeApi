@@ -19,5 +19,5 @@ app.use("/products", products);
 app.use("/category", category);
 
 app.listen(port, (req, res) => {
-  console.log(`Server on port ${port}`);
+    console.log(`Server on port ${port}`);
 });

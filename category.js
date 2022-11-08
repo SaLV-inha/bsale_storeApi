@@ -1,35 +1,74 @@
 const express = require("express");
-require("dotenv").config();
-const mysql = require("mysql2");
+const conection = require('./dataBase')
+const debug =require('debug')
 
-var conection = mysql.createPool({
-    host: process.env.host,
-    user: process.env.user,
-    database: process.env.database,
-    password: process.env.password,
-    debug: false
-    });
+
+const logger = debug('constroller:categories')
+
 
 let category = express.Router();
 
 category.get("/", (req, res) => {
     conection.query("SELECT * FROM category",  (err, rows) => {
         if (err) {
-            throw err;
+            return res
+            .status(500)
+            .send({ msg: "fALLA DEL SERVIDOR" });
         } else {
-            res.send(rows);
+            return res
+            .status(200)
+            .send(rows);
         }
     });
 });
 
 category.get("/:id", (req, res) => {
     let id = req.params.id;
+    if (isNaN(id)) {
+        return res
+        .status(400)
+        .send({msg: "El id a ingresar debe ser un número"});
+        }    
     conection.query("SELECT * FROM category WHERE id = ?", id, (err, row) => {
-        if (err) {
-            throw err;
+        if (row.length<1) {
+            logger('ID not exist!');
+            return res
+            .status(404)
+            .send({ msg: "ID NOT EXIST" });
+        }if (err) {
+            logger(err);
+            return res
+            .status(500)
+            .send({ msg: "fALLA DEL SERVIDOR" });
+    
         } else {
-            res.send(row);
+            return res
+            .status(200)
+            .send(row);
         }
+    });
+});
+
+category.get("/:id/products/", (req, res) => {
+    let category = req.params.id;
+    conection.query("SELECT * FROM product WHERE category = ?", category, (err, row) => {
+        if (err) {
+            logger(err);
+            return res
+            .status(500)
+            .send({ msg: "fALLA DEL SERVIDOR" });
+        }
+
+        if (row.length<1) {
+            logger('NOt exist products');
+            return res
+            .status(404)
+            .send({ msg: "CATEGORY NOT EXIST" });
+        }
+
+        res
+        .status(200)
+        .send(row);
     });
 });
 
