@@ -7,7 +7,8 @@ let conection = mysql.createPool({
     database: process.env.database,
     password: process.env.password,
     debug: false,
-    connectTimeout: 5000
+    connectTimeout: 5000,
+    connectionLimit: 1
 
 });
 

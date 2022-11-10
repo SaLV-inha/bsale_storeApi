@@ -21,3 +21,4 @@ app.use("/category", category);
 app.listen(port, (req, res) => {
     console.log(`Server on port ${port}`);
 });
+ 

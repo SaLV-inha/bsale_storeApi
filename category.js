@@ -21,7 +21,7 @@ category.get("/", (req, res) => {
         }
     });
 });
-
+ 
 category.get("/:id", (req, res) => {
     let id = req.params.id;
     if (isNaN(id)) {
@@ -40,7 +40,7 @@ category.get("/:id", (req, res) => {
             return res
             .status(500)
             .send({ msg: "fALLA DEL SERVIDOR" });
-    
+ 
         } else {
             return res
             .status(200)
@@ -49,27 +49,53 @@ category.get("/:id", (req, res) => {
     });
 });
 
-category.get("/:id/products/", (req, res) => {
+category.get("/:id/products", (req, res) => {
     let category = req.params.id;
-    conection.query("SELECT * FROM product WHERE category = ?", category, (err, row) => {
-        if (err) {
-            logger(err);
-            return res
-            .status(500)
-            .send({ msg: "fALLA DEL SERVIDOR" });
-        }
+    let desc = req.query["desc"]
+    
+    if (!desc){
+        conection.query("SELECT * FROM product WHERE category = ?", category, (err, row) => {
+            if (err) {
+                logger(err);
+                return res
+                .status(500)
+                .send({ msg: "fALLA DEL SERVIDOR" });
+            }
+    
+            if (row.length<1) {
+                logger('NOt exist products');
+                return res
+                .status(404)
+                .send({ msg: "CATEGORY NOT EXIST" });
+            }
+    
+            res
+            .status(200)
+            .send(row);
+            
+    
+        });
 
-        if (row.length<1) {
-            logger('NOt exist products');
-            return res
-            .status(404)
-            .send({ msg: "CATEGORY NOT EXIST" });
-        }
-
-        res
-        .status(200)
-        .send(row);
-    });
+    }
+    
+    if (desc =='si'){
+        conection.query( 'SELECT * FROM product WHERE discount > 0 AND category = ? ', category ,(err, rows) => {
+            if (err) {
+                logger(err);
+                return res.status(500).send({ msg: "fALLA DEL SERVIDOR" });
+            }
+                return res.status(200).send(rows);
+            });
+    }
+    if (desc =='no'){
+        conection.query( 'SELECT * FROM product WHERE discount = 0 AND category = ? ', category ,(err, rows) => {
+            if (err) {
+                logger(err);
+                return res.status(500).send({ msg: "fALLA DEL SERVIDOR" });
+            }
+                return res.status(200).send(rows);
+            });
+    }
 });
 
 
