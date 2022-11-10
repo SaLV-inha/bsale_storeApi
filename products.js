@@ -12,10 +12,6 @@ products.get("/", (req, res) => {
     let search = req.query['search'];
     let limit = req.query["limit"];
 
-    if (!sort || sort.trim()) {
-        sort = "asc"
-    }
-
     if (limit && isNaN(limit)) {
         return res.status(400).send({ msg: "Debe ingresar un parametro correcto" });
     }
