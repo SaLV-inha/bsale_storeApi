@@ -7,7 +7,6 @@ app.use(express.json());
 require("dotenv").config();
 
 const port = process.env.PUERTO || 1109;
-const cors = require("cors");
 
 const products = require("./products");
 const category = require("./category");
