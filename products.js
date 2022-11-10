@@ -30,7 +30,8 @@ products.get("/", (req, res) => {
                     return res.status(500).send({ msg: "fALLA DEL SERVIDOR" });
                 }
                 return res.status(200).send(rows);
-            });
+        });
+        return
     }
 
     let sql = "SELECT * FROM product ORDER BY";
@@ -45,6 +46,7 @@ products.get("/", (req, res) => {
                 }
                 return res.status(200).send(rows);
             });
+         return   
         }
     }
 
@@ -60,8 +62,8 @@ products.get("/", (req, res) => {
                 return res.status(200).send(rows);
             }
         );
+        return
     }
-    // REVISAR PROBLEMA QUE ME DA ESTA DECISION <<<====
 
     if (search) {
         let quesearch = '%' + search + '%'
