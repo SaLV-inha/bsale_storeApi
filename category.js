@@ -69,11 +69,11 @@ category.get("/:id/products", (req, res) => {
                 .send({ msg: "CATEGORY NOT EXIST" });
             }
     
-            res
+            return res
             .status(200)
             .send(row);
             
-    
+            
         });
 
     }
@@ -86,6 +86,7 @@ category.get("/:id/products", (req, res) => {
             }
                 return res.status(200).send(rows);
             });
+            return
     }
     if (desc =='no'){
         conection.query( 'SELECT * FROM product WHERE discount = 0 AND category = ? ', category ,(err, rows) => {
@@ -95,6 +96,7 @@ category.get("/:id/products", (req, res) => {
             }
                 return res.status(200).send(rows);
             });
+            return
     }
 });
 
