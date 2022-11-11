@@ -1,106 +1,16 @@
-**bsale_storeApi**
 
-**Tech stack** 
-
--Nodejs 
-
--Expressjs 
-
--MySQL2
-
-
-**Descripcción de la API**
-
-Una API que permite un estado dinamico en el manejo de la base de datos y manejo de productos
-
-Se realizó una API restfull que consume una base de datos otorgada por bsale.
- 
-Las tablas de la base de datos son :
-
-**products:**
-
--id 
-
--name 
-
--url_image 
-
--precio 
-
--descuento 
-
--categoria
-
-Se relaciona a otra tabla llamada categorías el cual me da: 
-
-**category:**
-
-
--id 
-
--name
-
-
-**Manejo de errores**
-
-Ante el ingreso de datos erroneo tenemos una resolución y anticipación a un gran número de ingresos
-de datos perjudiciales para la API.
-Las peticiones y querys deben cumplir con las siguientes estructuras
-
-```
-Dominio
-
-    -https://salva-bsale-api.herokuapp.com/
-
-Al dominio le ingresamos los siguientes EndPoints:
-
-    -/products => Productos
-
-    -/category => Categorías
-
-Para realizar filtración de productos:
-
-  Para que tengan valor estos filtros luego de un EndPoint comolamos "?" luego las Querys que presentamos a continuación.
-    -search = string => Esta cadena de texto que se le pasa a la API debe cumplir ciertas condiciones:
-              *No puede ser menor a 3 caracteres
-                 -Si se ingresa un numero de caracteres menor a 3 la API me retorna:
-                 Un status(400) con el siguiente mensaje {"msg": "El minimo de caracteres para realizar una busqueda es de 3"}
-                 -En caso de no ser encontrado el producto o que no exista coincidencia la API  me retorna:
-                 Un status (404) con el siguiente mensaje {"msg": "No se encuentra articulo con /String ingresado/ "}
-    
-    
-    -limit = Number =>Cualquier numero entero positivo.
-
-    -order = string (name, price) => Esto permite ordenarlos por sus nombres o precios de menor a mayor.
-
-    -sort  = string (asc, desc) => Si se quiere ordenar los datos de mayor a menor se pasa el sort=desc.
-
-    -desc = string (si) => Al usarlo como Key y no como valor me permite hacer una pretición de productos con descuentos.
-
-    -/category/id/products => Se le pasa un número entero como Id 
-
-  NOTA: las filtraciones de datos se puedes personalizar usando mas de un filtro y esto se logra 
-  colocando & entre ellos ejemplo:
-  
-    -/category/2/products?order=name&sort=desc&desc=si => Todos los productos de la categoria 2 ordenados por su nombre 
-                                                          de la Z a la A solo si tienen descuentos.
-    
-   
-
-```
+### **EndPoints** 
 
 
 
-**EndPoints** 
+#### **Todos los productos**
 
-`Get  /productos`
+`GET  /productos`
 
-**Todos los productos**
-
-Al hacer una petición a este endpoint me devuelve un array con todos los productos en la base de datos.
+Al hacer una petición a este endpoint nos devuelve un array con todos los productos.
 
 
-```
+```JSON
 [ 
     { 
         "id": 5,
@@ -122,12 +32,13 @@ Al hacer una petición a este endpoint me devuelve un array con todos los produc
 ]
 
 ```
-**Un producto en especifico**
+#### **Un producto en especifico**
 
-``Get /products/8`` 
+``GET /products/8`` 
 
-Al hacer una petición a este endpoint me trae el producto que tenga el ID especificado en este caso el producto de id = 8 
-```
+Al hacer una petición ha este endpoint nos trae el producto que constenga ese ID en este caso el producto de ID = 8 
+
+```JSON
 { 
     "name": "PISCO ALTO DEL CARMEN 35º",
     "url_image": "https://dojiw2m9tvv09.cloudfront.net/11132/product/alto8532.jpg",
@@ -138,15 +49,15 @@ Al hacer una petición a este endpoint me trae el producto que tenga el ID espec
 }
 ```
 
-**Limite de productos y Querys**
+#### **Limite de productos y Querys**
 
 **Querys**
 
-``Get /products?limit=2``
+``GET /products?limit=2``
 
-Al agregarle esta Query me permite traer un limite de N cantidad de productos en este caso 2
+Al agregarle esta Query nos permite traer un limite de N cantidad de productos en este caso 2
 
-```
+```JSON
 [ 
     { 
       "id": 5,
@@ -167,14 +78,14 @@ Al agregarle esta Query me permite traer un limite de N cantidad de productos en
 ]
 ```
 
-**Descuentos**
+#### **Descuentos**
 
 
-``Get /products?desc=si``
+``GET /products?desc=si``
 
-En esta query se le pasa de parámetro un ``desc=si``, esto hará que la aplicación me devuelva todos los productos que tengan algun tipo de descuentos.
+En esta query se le pasa de parámetro un ``desc=si``, esto hará que la aplicación nos devuelva todos los productos que tengan algun tipo de descuentos.
 
-```
+```JSON
 [ 
     { 
         "id": 5,
@@ -196,18 +107,16 @@ En esta query se le pasa de parámetro un ``desc=si``, esto hará que la aplicac
 ]
 ```
 
-**Ordenar y Filtrar**
+### **Ordenar y Filtrar**
 
-Este caso tiene una peculiaridad la cual es que se le puede pasar el valor por el cual se desea ordenar
-ya sea por el **precio** o el **nombre** pero no es requerido poner si se desea ordenar de manera ascendente o descendente.
-La aplicación por defecto asigna el valor de **ascendente**
+#### **Search**
 
-**Search**
-``Get /products?search=man``
-Realizar una busqueda en la API me permitirá filtrar los productos con el criterio de búsqueda del cliente.
+``GET /products?search=man``
+
+Realizar una busqueda en la API nos permitirá mostar productos que coincidan con el criterio de búsqueda del cliente.
 Se le debe pasar un string con una longitud minima de 3, ya que así evitaría en el caso de ingrear una letra, presentar la mayoría de los productos.
 
-```
+```JSON
 [
     {
         "id": 47,
@@ -228,12 +137,17 @@ Se le debe pasar un string con una longitud minima de 3, ya que así evitaría e
 ]
 ```
 
-**Order**
-
-``Get /products?order=name``
+#### **Order**
 
 
-```
+``GET /products?order=name``
+
+Este caso tiene una peculiaridad la cual es que se le puede pasar el valor por el cual se desea ordenar
+ya sea por el **precio** o el **nombre** pero no es requerido poner si se desea ordenar de manera ascendente o descendente.
+La aplicación por defecto asigna el valor de **ascendente**
+
+
+```JSON
 [ 
     { 
         "id": 104,
@@ -255,14 +169,15 @@ Se le debe pasar un string con una longitud minima de 3, ya que así evitaría e
 ]
 ```
 
-**Sort**
+#### **Sort**
 
-``Get /products?order=name&sort=desc``
+``GET /products?order=name&sort=desc``
 
 
 Si no queremos ordenar los productos de manera ascendente tenemos esta otra query la cual para poder usarla usamos Ampersand y le paramos **sort = des**.
 Esto nos devolverá todos los productos ordenamos de manera descendente teniendo en cuenta el tipo de dato por el cual se ordena ya sea nombre o precio.
-```
+
+```JSON
 [ 
     { 
         "id": 50,
@@ -284,15 +199,15 @@ Esto nos devolverá todos los productos ordenamos de manera descendente teniendo
 ]
 ```
 
-**importante**
+#### **importante**
 
 Las Querys se pueden usar con otras Querys un ejemplo es este
 
-``Get /products?limit=3&order=name&sort=desc`` 
+``GET /products?limit=3&order=name&sort=desc`` 
 
 Esto nos devolverá un limite de 3 productos ordenadas por su nombre en manera descendente.
 
-```
+```JSON
 [ 
     { 
         "id": 5,
@@ -320,14 +235,15 @@ Esto nos devolverá un limite de 3 productos ordenadas por su nombre en manera d
 ```
 
 
-**Category**
+###**Category**
 
-**Todas las categorías**
+#### **Todas las categorías**
 
-``Get /category`` 
+``GET /category`` 
 
-Al hacer una peticion a este endpoint me devuelve un array con todos las categorías en la base de datos.
-```
+Al hacer una petición a este endpoint nos devuelve un array con todos las categorías en la base de datos.
+
+```JSON
 [
     {
         "id": 1,
@@ -359,13 +275,13 @@ Al hacer una peticion a este endpoint me devuelve un array con todos las categor
     }
 ]
 ```
-**Una categoría en especifico**
+#### **Una categoría en especifico**
 
-``Get /category/5``
+``GET /category/5``
 
-Al hacer una peticion a este endpoint me trae la categoria que tenga el ID especificado en este caso la categoria de id = 5
+Al hacer una petición a este endpoint nos trae la categoria que tenga el ID especificado en este caso la categoria de id = 5
 
-``` 
+```JSON
 [ 
     { 
         "id": 5,
@@ -375,13 +291,13 @@ Al hacer una peticion a este endpoint me trae la categoria que tenga el ID espec
 ```
 
 
-**Todos los productos de una misma categoria**
+#### **Todos los productos de una misma categoria**
 
-``Get /category/2/products`` 
+``GET /category/2/products`` 
 
-Al hacer una peticion a este endpoint me trae todos los productos que tengan la categoria asignada.
+Al hacer una petición a este endpoint nos trae todos los productos que tengan la categoria asignada.
 
-```
+```JSON
 [ 
     { 
         "id": 8,
@@ -403,14 +319,14 @@ Al hacer una peticion a este endpoint me trae todos los productos que tengan la 
 ]
 ```
 
-**filtrar**
+#### **filtrar**
 
-``Get /category/2/products?desc=si``
+``GET /category/2/products?desc=si``
 
-Al hacer esta Query me trae todos los productos que tengan la categoría asignada y que también tengan algún tipo de descuento.
+Al hacer esta Query nos trae todos los productos que tengan la categoría asignada y que también tengan algún tipo de descuento.
 
 
-```
+```JSON
 [
     {
         "id": 8,
@@ -439,5 +355,15 @@ Al hacer esta Query me trae todos los productos que tengan la categoría asignad
     ...
 ]
 ```
+
+## Funciones que me gustaria agregar u optimizar:
+
+#### **Filtros**
+
+Al poner como prioridad la UX, poder optimizar, mejorar y talvez aumentar los filtros o las busquedas
+para que a partir de eso el usuario pueda conseguir exactamente lo que desea buscar con solo agregar estos filtros
+
+
+
 
 **Desarrollador: Luis Salvador**
